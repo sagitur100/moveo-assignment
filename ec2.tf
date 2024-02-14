@@ -10,7 +10,12 @@ resource "aws_security_group" "instance_sg" {
     to_port = 80
     protocol = "tcp"
     cidr_blocks = [ "0.0.0.0/0" ]
-    
+  }
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "tcp"
+    cidr_blocks = [ "0.0.0.0/0" ]
   }
 
   # Allow all outbound traffic
@@ -51,7 +56,7 @@ resource "aws_instance" "nginx-docker-host" {
   # Bootstrap script to install Docker
   user_data = <<-EOF
               #!/bin/bash
-              sudo amazon-linux-extras install docker -y
+              sudo yum install docker -y
               sudo systemctl enable docker
               sudo service docker start
               sudo usermod -a -G docker ec2-user

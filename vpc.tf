@@ -31,6 +31,7 @@ resource "aws_subnet" "private_subnets" {
  }
 }
 
+
 resource "aws_internet_gateway" "gw" {
  vpc_id = aws_vpc.main.id
  
@@ -38,6 +39,18 @@ resource "aws_internet_gateway" "gw" {
    Name = "Nginx VPC IG"
  }
 }
+
+## Import as data resource the default route table
+## attached to private subnets
+#data "aws_route_table" "default-rt" {
+#  vpc_id = aws_vpc.main.id
+#  subnet_id = aws_subnet.private_subnets[0].id
+#
+#}
+resource "aws_route_table" "private_routing_table" {
+  vpc_id = aws_vpc.main.id
+}
+
 
 # Create the second route table 
 # (the main is created with the vpc)
@@ -55,23 +68,6 @@ resource "aws_route_table" "second_rt" {
  }
 }
 
-resource "aws_route_table" "rt-private1" {
-    vpc_id = aws_vpc.main.id
-    tags = {
-        name = "rt-private1"
-    }
-    route { 
-        cidr_block = "0.0.0.0/0"
-        gateway_id = aws_internet_gateway.gw.id
-    }
-  
-}
-resource "aws_route_table_association" "assoc-rt-private1" {
-    subnet_id = aws_subnet.private_subnets[0].id
-    route_table_id = aws_route_table.rt-private1.id
-  
-}
-
 
 # Associate public subnets with the second routing table that enable access to public internet.
 resource "aws_route_table_association" "public_subnet_asso" {
@@ -79,3 +75,5 @@ resource "aws_route_table_association" "public_subnet_asso" {
  subnet_id      = element(aws_subnet.public_subnets[*].id, count.index)
  route_table_id = aws_route_table.second_rt.id
 }
+
+
