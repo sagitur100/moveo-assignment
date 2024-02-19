@@ -1,5 +1,4 @@
 provider "aws" {
   region     = var.region
-  access_key = var.access_key_id
-  secret_key = var.secret_key
+  allowed_account_ids = ["975050315907"]
 }
