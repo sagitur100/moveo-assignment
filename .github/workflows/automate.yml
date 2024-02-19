@@ -23,8 +23,6 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             sagitur100/nginx
-          tags: |
-            type=schedule
 
       # Docker build action
       - name: Set up Docker buildx
