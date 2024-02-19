@@ -56,7 +56,7 @@ resource "aws_instance" "nginx-docker-host" {
               sudo systemctl enable docker
               sudo service docker start
               sudo usermod -a -G docker ec2-user
-              docker run -d -p 80:80 sagitur100/nginx
+              docker run -d -p 80:80 sagitur100/nginx:latest
               EOF
 
   tags = {
