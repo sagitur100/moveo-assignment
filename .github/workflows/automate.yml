@@ -6,7 +6,7 @@ name: Automate nginx deployment
 on:
   push:
     branches:
-      - master
+      - bonus
 
 jobs:
   build_push_image:
