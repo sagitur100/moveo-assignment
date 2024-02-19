@@ -15,14 +15,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            sagitur100/nginx
 
       # Docker build action
       - name: Set up Docker buildx
@@ -40,6 +32,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: 'sagitur100/nginx:${{ github.run_number  }}'
           labels: ${{ steps.meta.outputs.labels }}
 
