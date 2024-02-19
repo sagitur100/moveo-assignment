@@ -45,9 +45,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - id: cd 
-        run: cd ${{ github.repository }}/${{ github.repository }} \
-
+        with:
+          ref: bonus
+  
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
