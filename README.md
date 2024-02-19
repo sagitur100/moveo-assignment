@@ -11,4 +11,4 @@ Instructions:
     - terraform plan
     - terraform apply
     - terraform output will return the LB DNS name.
-    - Access this DNS name.
+    - Access this DNS name
