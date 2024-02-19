@@ -42,14 +42,20 @@ jobs:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_KEY }}
+      TF_STATE: ${{ secrets.TF_STATE }}
+      GH_TOKEN: ${{ secrets.GH_PA_TOKEN }}
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: bonus
-  
+      
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Create TF state file
+        run: echo $TF_STATE > terraform.tfstate
 
 
       - name: Terraform init
@@ -65,6 +71,9 @@ jobs:
       - name: Terraform apply
         id: apply
         run: terraform apply -auto-approve
+        
+      - name: Push state to github env secret
+        run: gh secret set TF_STATE < terraform.tfstate
 
       
              
