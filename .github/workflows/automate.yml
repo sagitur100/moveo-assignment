@@ -54,8 +54,12 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Create TF state file
-        run: '[ -z "$TF_STATE" ] || echo $TF_STATE > terraform.tfstate'
+      #- name: Create TF state file
+      #  run: '[ -z "$TF_STATE" ] || echo $TF_STATE > terraform.tfstate'
+      - uses: actions/download-artifact@v4
+        with:
+          name: tfstate
+          path: ./terraform.tfstate
 
       - name: Terraform init
         run: terraform init
@@ -71,8 +75,10 @@ jobs:
         id: apply
         run: terraform apply -auto-approve
         
-      - name: Push state to github env secret
-        run: gh secret set TF_STATE < terraform.tfstate
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tfstate
+          path: terraform.tfstate
 
       
              
