@@ -56,10 +56,10 @@ jobs:
 
       #- name: Create TF state file
       #  run: '[ -z "$TF_STATE" ] || echo $TF_STATE > terraform.tfstate'
-      #- uses: actions/download-artifact@v4
-      #  with:
-      #    name: tfstate
-      #    path: ./terraform.tfstate
+      - uses: actions/download-artifact@v4
+        with:
+          name: tfstate
+          path: ./terraform.tfstate
 
       - name: Terraform init
         run: terraform init
