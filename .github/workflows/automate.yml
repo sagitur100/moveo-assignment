@@ -55,8 +55,7 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: Create TF state file
-        run: if [ -z terraform.tfstate]; then; echo $TF_STATE > terraform.tfstate; fi
-
+        run: '[ -z "$TF_STATE" ] && echo $TF_STATE > terraform.tfstate'
 
       - name: Terraform init
         run: terraform init
