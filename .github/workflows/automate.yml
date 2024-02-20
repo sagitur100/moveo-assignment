@@ -1,0 +1,77 @@
+# Automate NGINX deployment, include build and push image, terraform apply.
+
+# Prerequisites:
+#- DockerHub access token
+#- GitHub secrets (DOCKERHUB_USERNAME and DOCKERHUB_TOKEN)
+#- s3 bucket
+# 
+## need to shrink permissions
+name: Automate nginx deployment
+on:
+  push:
+    branches:
+      - bonus
+
+jobs:
+  build_push_image:
+    name: Build and push docker image.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Docker build action
+      - name: Set up Docker buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME  }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image and push to DockerHub
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: sagitur100/nginx:${{ github.run_number }}, sagitur100/nginx:latest
+
+
+  terraform:
+    name: Deploy nginx app - applying terraform configuration
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_KEY }}
+      TF_STATE: ${{ secrets.TF_STATE }}
+      GH_TOKEN: ${{ secrets.GH_PA_TOKEN }}
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: bonus
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform init
+        run: terraform init
+      
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+
+      - name: Terraform apply
+        id: apply
+        run: terraform apply -auto-approve
+        
+
+      
+             
+
