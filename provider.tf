@@ -1,5 +1,6 @@
 provider "aws" {
   region     = var.region
+  # Allow access secret and key id as env variabels.
   allowed_account_ids = ["975050315907"]
   
 }
