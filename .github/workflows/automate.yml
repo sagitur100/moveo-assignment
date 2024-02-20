@@ -1,8 +1,11 @@
 # Automate NGINX deployment, include build and push image, terraform apply.
 
-# Prerequisites - dockerhub access token, github secrets (DOCKERHUB_USERNAME and DOCKERHUB_TOKEN), 
-# variables.tf file (with values).
-## need to think what to do with the variables.tf file and aws access tokens (inside the runner)
+# Prerequisites:
+#- DockerHub access token
+#- GitHub secrets (DOCKERHUB_USERNAME and DOCKERHUB_TOKEN)
+#- s3 bucket
+# 
+## need to shrink permissions
 name: Automate nginx deployment
 on:
   push:
@@ -54,22 +57,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      #- name: Create TF state file
-      #  run: '[ -z "$TF_STATE" ] || echo $TF_STATE > terraform.tfstate'
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: tfstate  # Name of the artifact to download
-          run_id: ${{ github.event.before }}  # ID of the workflow run
-          path: terraform.state
-
-
-      #- uses: actions/download-artifact@v4
-      #  with:
-      #    name: tfstate
-      #    path: ./terraform.tfstate
-#
       - name: Terraform init
         run: terraform init
       
@@ -84,10 +71,6 @@ jobs:
         id: apply
         run: terraform apply -auto-approve
         
-      - uses: actions/upload-artifact@v4
-        with:
-          name: tfstate
-          path: terraform.tfstate
 
       
              
